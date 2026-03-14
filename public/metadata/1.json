@@ -1,0 +1,15 @@
+{
+  "name": "Thrincs Blockchain Certificate #1",
+  "description": "Certificado digital verificable emitido como demostración del proyecto Thrincs.",
+  "image": "http://localhost:3000/assets/certificate-demo.png",
+  "external_url": "http://localhost:3000/verify.html",
+  "attributes": [
+    { "trait_type": "Proyecto", "value": "Thrincs" },
+    { "trait_type": "Tipo", "value": "Certificate NFT / SBT Demo" },
+    { "trait_type": "Alumno", "value": "Juan Pérez" },
+    { "trait_type": "Curso", "value": "Blockchain Fundamentals" },
+    { "trait_type": "Institución", "value": "Thrincs" },
+    { "trait_type": "Estado", "value": "Verified" },
+    { "trait_type": "Formato", "value": "Demo visual con certificado PNG" }
+  ]
+}

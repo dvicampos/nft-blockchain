@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Verificar Certificado - Thrincs</title>
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+  <main class="page verify-section">
+    <section class="hero">
+      <div class="badge">Verification Portal</div>
+      <h1>Verificación de certificado</h1>
+      <p>
+        Consulta el certificado emitido en la demo de Thrincs mediante su Token ID,
+        mostrando owner, issuer, hash, metadata y la representación visual del documento.
+      </p>
+      <div class="top-actions">
+        <a href="/index.html">Volver al mint</a>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>Buscar por Token ID</h2>
+      <label class="label">Token ID</label>
+      <input id="verifyTokenId" placeholder="Ej. 1" />
+      <button id="verifyBtn">Verificar certificado</button>
+      <p class="small" id="verifyStatus">Esperando consulta...</p>
+    </section>
+
+    <section class="card" id="verifyResult" style="display:none; margin-top:24px;">
+      <div class="badge">Verified ✅</div>
+
+      <div class="grid">
+        <div>
+          <img id="verifyImage" class="preview-image" alt="Certificado verificado" />
+        </div>
+
+        <div>
+          <h2 id="verifyName"></h2>
+          <p class="small" id="verifyDescription"></p>
+
+          <div class="data-block">
+            <strong>Token ID</strong>
+            <div id="verifyTokenIdValue"></div>
+          </div>
+
+          <div class="data-block">
+            <strong>Owner / Alumno</strong>
+            <div id="verifyOwner"></div>
+          </div>
+
+          <div class="data-block">
+            <strong>Issuer</strong>
+            <div id="verifyIssuer"></div>
+          </div>
+
+          <div class="data-block">
+            <strong>Hash del documento</strong>
+            <div id="verifyHash"></div>
+          </div>
+
+          <div class="data-block">
+            <strong>Metadata URI</strong>
+            <a id="verifyMetadata" target="_blank" class="small"></a>
+          </div>
+        </div>
+      </div>
+
+      <h3 style="margin-top: 24px;">Atributos</h3>
+      <div id="verifyAttributes" class="meta-list"></div>
+    </section>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/ethers@6.13.2/dist/ethers.umd.min.js"></script>
+  <script>
+    const contractAddress = "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0";
+    const contractABI = [
+      "function certificates(uint256) view returns (string metadataURI, string documentHash, address issuer, uint256 issuedAt)",
+      "function ownerOf(uint256 tokenId) view returns (address)",
+      "function tokenURI(uint256 tokenId) view returns (string)"
+    ];
+
+    let provider;
+    let contract;
+
+    const verifyBtn = document.getElementById("verifyBtn");
+    const verifyStatus = document.getElementById("verifyStatus");
+    const verifyResult = document.getElementById("verifyResult");
+
+    async function setupProvider() {
+      provider = new ethers.JsonRpcProvider("http://127.0.0.1:8545");
+      contract = new ethers.Contract(contractAddress, contractABI, provider);
+    }
+
+    async function loadCertificate(tokenId) {
+      try {
+        verifyStatus.innerHTML = "Consultando certificado...";
+
+        const certData = await contract.certificates(tokenId);
+        const owner = await contract.ownerOf(tokenId);
+        const tokenUri = await contract.tokenURI(tokenId);
+
+        const metadataRes = await fetch(tokenUri);
+        const metadata = await metadataRes.json();
+
+        document.getElementById("verifyImage").src = metadata.image;
+        document.getElementById("verifyName").textContent = metadata.name;
+        document.getElementById("verifyDescription").textContent = metadata.description;
+        document.getElementById("verifyTokenIdValue").textContent = tokenId;
+        document.getElementById("verifyOwner").textContent = owner;
+        document.getElementById("verifyIssuer").textContent = certData.issuer;
+        document.getElementById("verifyHash").textContent = certData.documentHash;
+        document.getElementById("verifyMetadata").href = tokenUri;
+        document.getElementById("verifyMetadata").textContent = tokenUri;
+
+        const container = document.getElementById("verifyAttributes");
+        container.innerHTML = "";
+
+        if (metadata.attributes && metadata.attributes.length) {
+          metadata.attributes.forEach((attr) => {
+            const item = document.createElement("div");
+            item.className = "meta-item";
+            item.innerHTML = `
+              <strong>${attr.trait_type}</strong>
+              <div>${attr.value}</div>
+            `;
+            container.appendChild(item);
+          });
+        }
+
+        verifyResult.style.display = "block";
+        verifyStatus.innerHTML = '<span class="success">Certificado verificado correctamente ✅</span>';
+      } catch (error) {
+        verifyResult.style.display = "none";
+        verifyStatus.innerHTML = `<span class="error">${error.shortMessage || error.message}</span>`;
+      }
+    }
+
+    verifyBtn.addEventListener("click", async () => {
+      const tokenId = document.getElementById("verifyTokenId").value.trim();
+      if (!tokenId) {
+        verifyStatus.innerHTML = '<span class="error">Ingresa un Token ID</span>';
+        return;
+      }
+      await loadCertificate(tokenId);
+    });
+
+    (async () => {
+      await setupProvider();
+
+      const params = new URLSearchParams(window.location.search);
+      const tokenId = params.get("tokenId");
+      if (tokenId) {
+        document.getElementById("verifyTokenId").value = tokenId;
+        await loadCertificate(tokenId);
+      }
+    })();
+  </script>
+</body>
+</html>

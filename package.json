@@ -1,0 +1,18 @@
+{
+  "name": "thrincs-demo",
+  "version": "1.0.0",
+  "main": "server.js",
+  "scripts": {
+    "dev": "node server.js",
+    "hash": "node scripts/generate-hash.js",
+    "metadata": "node scripts/build-metadata.js"
+  },
+  "dependencies": {
+    "@openzeppelin/contracts": "^4.9.6",
+    "express": "^4.19.2"
+  },
+  "devDependencies": {
+    "@nomicfoundation/hardhat-toolbox": "^6.1.2",
+    "hardhat": "^2.22.10"
+  }
+}

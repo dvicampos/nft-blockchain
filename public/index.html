@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Thrincs Demo Certificate NFT</title>
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+  <main class="page">
+    <section class="hero">
+      <div class="badge">Verified Blockchain Certificate Demo</div>
+      <h1>Thrincs - Certificado digital verificable</h1>
+      <p>
+        Demo funcional del proyecto Thrincs para representar la emisión de certificados
+        blockchain mediante un NFT tipo Soulbound, utilizando metadata, hash de documento,
+        imagen de certificado y verificación posterior.
+      </p>
+      <div class="top-actions">
+        <a href="/verify.html">Ir a verificación</a>
+        <a href="/metadata/1.json" target="_blank">Ver metadata JSON</a>
+      </div>
+    </section>
+
+    <section class="grid">
+      <article class="card">
+        <h2>Mint certificado</h2>
+
+        <button id="connectBtn">Conectar MetaMask</button>
+        <p class="small" id="walletStatus">Wallet no conectada</p>
+
+        <label class="label">Wallet del alumno</label>
+        <input id="studentAddress" value="0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC" />
+
+        <label class="label">Metadata URI</label>
+        <input id="metadataURI" value="http://localhost:3000/metadata/1.json" />
+
+        <label class="label">Hash SHA-256 del documento</label>
+        <input id="documentHash" value="demo-certificado-juan-2026" />
+
+        <button id="mintBtn">Crear NFT certificado</button>
+        <p class="small" id="mintStatus">Esperando acción...</p>
+      </article>
+
+      <article class="card">
+        <h2>Preview visual del certificado</h2>
+        <img
+          src="/assets/certificate-demo.png"
+          alt="Certificado Thrincs"
+          class="preview-image"
+        />
+        <div class="data-block">
+          <strong>Modelo de producto final</strong>
+          <div class="small">
+            Esta vista representa la lógica del proyecto Thrincs: emisión de un certificado
+            digital verificable, asociado a metadata, hash de documento e identidad on-chain.
+          </div>
+        </div>
+        <div class="data-block">
+          <strong>Concepto</strong>
+          <div class="small">
+            El certificado no se plantea como arte NFT, sino como una credencial verificable
+            y trazable en blockchain, ideal para diplomas, constancias o certificaciones.
+          </div>
+        </div>
+      </article>
+    </section>
+
+    <section class="card" id="certificateResult" style="display:none; margin-top:24px;">
+      <div class="badge">Mint exitoso</div>
+      <h2>Certificado emitido</h2>
+
+      <div class="grid">
+        <div>
+          <img id="certImage" class="preview-image" alt="Certificado emitido" />
+        </div>
+
+        <div>
+          <h3 id="certName"></h3>
+          <p class="small" id="certDescription"></p>
+
+          <div class="data-block">
+            <strong>Token ID</strong>
+            <div id="certTokenId"></div>
+          </div>
+
+          <div class="data-block">
+            <strong>Owner / Alumno</strong>
+            <div id="certOwner"></div>
+          </div>
+
+          <div class="data-block">
+            <strong>Issuer</strong>
+            <div id="certIssuer"></div>
+          </div>
+
+          <div class="data-block">
+            <strong>Hash del documento</strong>
+            <div id="certHash"></div>
+          </div>
+
+          <div class="data-block">
+            <strong>Metadata URI</strong>
+            <a id="certMetadata" target="_blank" class="small"></a>
+          </div>
+
+          <div class="data-block">
+            <strong>TX Hash</strong>
+            <div id="certTx" class="small"></div>
+          </div>
+
+          <div class="top-actions">
+            <a id="verifyLink">Verificar certificado</a>
+          </div>
+        </div>
+      </div>
+
+      <h3 style="margin-top: 24px;">Metadata visual</h3>
+      <div id="certAttributes" class="meta-list"></div>
+    </section>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/ethers@6.13.2/dist/ethers.umd.min.js"></script>
+  <script src="/app.js"></script>
+</body>
+</html>

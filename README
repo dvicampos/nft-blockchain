@@ -1,0 +1,403 @@
+Thrincs Demo – Certificado digital verificable en Blockchain
+
+Demo funcional del proyecto Thrincs para representar la emisión de certificados verificables mediante blockchain utilizando NFT tipo Soulbound (SBT).
+
+Este proyecto muestra el flujo completo de:
+
+emisión de certificados digitales
+
+asociación de metadata
+
+imagen del certificado
+
+hash del documento
+
+verificación pública del certificado
+
+El objetivo es representar cómo podría funcionar un sistema de credenciales verificables en blockchain.
+
+Arquitectura del demo
+
+El sistema está compuesto por tres partes principales:
+
+1. Smart Contract
+
+Contrato ERC721 modificado para actuar como Soulbound Token, lo que significa que:
+
+el certificado no puede transferirse
+
+queda asociado permanentemente a la wallet del alumno
+
+Información almacenada:
+
+metadata URI
+
+hash del documento
+
+issuer
+
+fecha de emisión
+
+Archivo:
+
+contracts/ThrincsDemoSBT.sol
+2. Frontend
+
+Interfaz web para:
+
+conectar MetaMask
+
+emitir certificados
+
+visualizar el certificado
+
+consultar metadata
+
+verificar credenciales
+
+Archivos:
+
+public/index.html
+public/verify.html
+public/app.js
+public/styles.css
+3. Metadata
+
+Archivo JSON que describe el certificado NFT.
+
+Contiene:
+
+nombre
+
+descripción
+
+imagen
+
+atributos
+
+información del curso
+
+Archivo ejemplo:
+
+public/metadata/1.json
+Estructura del proyecto
+thrincs-demo
+│
+├─ contracts
+│  └─ ThrincsDemoSBT.sol
+│
+├─ public
+│  ├─ assets
+│  │  └─ certificate-demo.png
+│  │
+│  ├─ metadata
+│  │  └─ 1.json
+│  │
+│  ├─ index.html
+│  ├─ verify.html
+│  ├─ styles.css
+│  └─ app.js
+│
+├─ scripts
+│  └─ deploy.js
+│
+├─ hardhat.config.js
+├─ package.json
+├─ server.js
+└─ README.md
+Requisitos
+
+Instalar previamente:
+
+Node.js
+npm
+MetaMask
+
+Verificar:
+
+node -v
+npm -v
+Instalación del proyecto
+
+Entrar al proyecto:
+
+cd thrincs-demo
+
+Instalar dependencias:
+
+npm install
+
+Si faltan dependencias:
+
+npm install express
+npm install @openzeppelin/contracts@4.9.6
+npm install --save-dev hardhat@2.22.10
+npm install --save-dev @nomicfoundation/hardhat-toolbox@hh2
+Compilar el contrato
+npx hardhat clean
+npx hardhat compile
+
+Salida esperada:
+
+Compiled X Solidity files successfully
+Levantar la blockchain local
+
+Abrir una terminal y ejecutar:
+
+npx hardhat node
+
+Esto inicia una blockchain local y mostrará cuentas con ETH de prueba.
+
+Ejemplo:
+
+Account #0: 0xf39Fd6e...
+Private Key: 0xac0974be...
+
+No cerrar esta terminal.
+
+Desplegar el contrato
+
+En otra terminal ejecutar:
+
+npx hardhat run scripts/deploy.js --network localhost
+
+Salida esperada:
+
+Deploying with: 0xf39Fd6e...
+ThrincsDemoSBT deployed at: 0x123ABC...
+
+Copiar la dirección del contrato.
+
+Configurar el frontend
+
+Editar archivo:
+
+public/app.js
+
+Cambiar:
+
+const contractAddress = "PEGAR_DIRECCION_AQUI";
+
+por la dirección del deploy.
+
+También editar:
+
+public/verify.html
+
+y reemplazar:
+
+const contractAddress = "PEGAR_DIRECCION_AQUI";
+Levantar servidor web
+node server.js
+
+Salida esperada:
+
+Demo corriendo en http://localhost:3000
+Abrir la aplicación
+
+Ir al navegador:
+
+http://localhost:3000
+Configurar MetaMask
+
+Agregar red personalizada:
+
+Network Name:
+
+Hardhat Local
+
+RPC URL:
+
+http://127.0.0.1:8545
+
+Chain ID:
+
+31337
+
+Currency Symbol:
+
+ETH
+
+Block Explorer:
+
+vacío
+Importar una cuenta de Hardhat
+
+Desde la terminal donde corre Hardhat copiar una private key.
+
+Ejemplo:
+
+0x59c6995e998f97a5a0044976f...
+
+En MetaMask:
+
+Import Account
+
+Pegar la private key.
+
+Emitir un certificado
+
+En la página:
+
+Conectar MetaMask
+
+Escribir wallet del alumno
+
+Colocar metadata URI
+
+Escribir hash del documento
+
+Presionar
+
+Crear NFT certificado
+
+Salida esperada:
+
+NFT creado correctamente
+TX: 0x....
+Token ID: 1
+Verificar un certificado
+
+Ir a:
+
+http://localhost:3000/verify.html
+
+Ingresar:
+
+Token ID
+
+Presionar:
+
+Verificar certificado
+
+Se mostrará:
+
+imagen
+
+metadata
+
+owner
+
+issuer
+
+hash
+
+atributos
+
+Personalización del proyecto
+
+Este demo puede adaptarse fácilmente a otros sistemas de certificación.
+
+Cambiar imagen del certificado
+
+Reemplazar archivo:
+
+public/assets/certificate-demo.png
+
+por cualquier imagen personalizada.
+
+Ejemplo:
+
+diploma
+
+badge
+
+credencial
+
+constancia
+
+Cambiar metadata del certificado
+
+Editar archivo:
+
+public/metadata/1.json
+
+Ejemplo:
+
+{
+  "name": "Certificado Blockchain",
+  "description": "Certificado verificable en blockchain",
+  "image": "http://localhost:3000/assets/certificate-demo.png",
+  "attributes": [
+    { "trait_type": "Alumno", "value": "Juan Pérez" },
+    { "trait_type": "Curso", "value": "Blockchain Básico" },
+    { "trait_type": "Institución", "value": "Thrincs" },
+    { "trait_type": "Estado", "value": "Verified" }
+  ]
+}
+Cambiar wallet del alumno
+
+En el formulario se puede ingresar cualquier dirección válida.
+
+Ejemplo:
+
+0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC
+Cambiar hash del documento
+
+El campo:
+
+Hash SHA-256 del documento
+
+puede contener cualquier identificador único.
+
+Ejemplo:
+
+demo-certificado-juan-2026
+
+o un hash real.
+
+Reinicio de Hardhat
+
+Si se reinicia:
+
+npx hardhat node
+
+entonces:
+
+desaparece la blockchain local
+
+desaparecen los NFTs
+
+desaparece el contrato
+
+Se debe repetir:
+
+npx hardhat run scripts/deploy.js --network localhost
+
+y actualizar nuevamente la dirección del contrato en:
+
+public/app.js
+public/verify.html
+Flujo completo del sistema
+Alumno
+   ↓
+Sube certificado
+   ↓
+Se genera hash
+   ↓
+Se crea metadata
+   ↓
+Se emite NFT/SBT
+   ↓
+Se guarda en blockchain
+   ↓
+Certificado verificable públicamente
+Propósito del proyecto
+
+Este demo representa el concepto de:
+
+credenciales verificables en blockchain
+
+Aplicable a:
+
+diplomas
+
+certificaciones
+
+badges
+
+constancias
+
+licencias
+
+credenciales profesionales
