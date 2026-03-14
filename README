@@ -1,86 +1,152 @@
-Thrincs Demo – Certificado digital verificable en Blockchain
+# 🎓 Thrincs Demo
+### Certificados Digitales Verificables en Blockchain
 
-Demo funcional del proyecto Thrincs para representar la emisión de certificados verificables mediante blockchain utilizando NFT tipo Soulbound (SBT).
+<p align="center">
 
-Este proyecto muestra el flujo completo de:
+![Blockchain](https://img.shields.io/badge/Blockchain-Ethereum-blue)
+![Framework](https://img.shields.io/badge/Framework-Hardhat-orange)
+![Standard](https://img.shields.io/badge/Standard-ERC721-purple)
+![Token](https://img.shields.io/badge/Token-Soulbound-red)
+![Status](https://img.shields.io/badge/Status-Demo-green)
 
-emisión de certificados digitales
+</p>
 
-asociación de metadata
+---
 
-imagen del certificado
+## 🧠 Descripción
 
-hash del documento
+**Thrincs Demo** es una demostración funcional de cómo emitir **certificados digitales verificables** utilizando **tecnología blockchain**.
 
-verificación pública del certificado
+El sistema utiliza **NFT tipo Soulbound (SBT)** para representar certificados que:
 
-El objetivo es representar cómo podría funcionar un sistema de credenciales verificables en blockchain.
+- no pueden transferirse
+- quedan permanentemente asociados a una wallet
+- pueden verificarse públicamente
 
-Arquitectura del demo
+Esto permite crear sistemas de **credenciales digitales confiables e inmutables**.
 
-El sistema está compuesto por tres partes principales:
+---
 
-1. Smart Contract
+# 🚀 Qué demuestra este proyecto
 
-Contrato ERC721 modificado para actuar como Soulbound Token, lo que significa que:
+El demo implementa el flujo completo de emisión de certificados:
 
-el certificado no puede transferirse
+✔ emisión de certificados digitales  
+✔ asociación de metadata NFT  
+✔ imagen del certificado  
+✔ hash del documento  
+✔ registro en blockchain  
+✔ verificación pública  
 
-queda asociado permanentemente a la wallet del alumno
+---
+
+# 🧩 Arquitectura del sistema
+
+```
+Usuario
+   │
+   ▼
+Frontend Web
+(index.html)
+   │
+   ▼
+Smart Contract
+(ERC721 Soulbound)
+   │
+   ▼
+Blockchain
+(Hardhat Local)
+   │
+   ▼
+Metadata + Imagen
+(JSON + Assets)
+```
+
+---
+
+# 🏗 Componentes del proyecto
+
+## 1️⃣ Smart Contract
+
+Contrato **ERC721 modificado para actuar como Soulbound Token**.
+
+Características:
+
+| Propiedad | Descripción |
+|-----------|-------------|
+| No transferible | El certificado no puede enviarse a otra wallet |
+| Inmutable | La información queda registrada permanentemente |
+| Verificable | Cualquiera puede consultar el certificado |
 
 Información almacenada:
 
-metadata URI
+- metadata URI
+- hash del documento
+- issuer
+- fecha de emisión
 
-hash del documento
+Archivo principal:
 
-issuer
-
-fecha de emisión
-
-Archivo:
-
+```
 contracts/ThrincsDemoSBT.sol
-2. Frontend
+```
 
-Interfaz web para:
+---
 
-conectar MetaMask
+# 🌐 Frontend
 
-emitir certificados
+Interfaz web para interactuar con el contrato.
 
-visualizar el certificado
+Permite:
 
-consultar metadata
-
-verificar credenciales
+- conectar MetaMask
+- emitir certificados
+- visualizar certificados
+- consultar metadata
+- verificar credenciales
 
 Archivos:
 
+```
 public/index.html
 public/verify.html
 public/app.js
 public/styles.css
-3. Metadata
+```
 
-Archivo JSON que describe el certificado NFT.
+---
 
-Contiene:
+# 📄 Metadata NFT
 
-nombre
+Cada certificado tiene un archivo JSON que describe el NFT.
 
-descripción
+Ejemplo:
 
-imagen
-
-atributos
-
-información del curso
-
-Archivo ejemplo:
-
+```
 public/metadata/1.json
-Estructura del proyecto
+```
+
+Ejemplo de metadata:
+
+```json
+{
+  "name": "Certificado Blockchain",
+  "description": "Certificado verificable en blockchain",
+  "image": "http://localhost:3000/assets/certificate-demo.png",
+  "attributes": [
+    { "trait_type": "Alumno", "value": "Juan Pérez" },
+    { "trait_type": "Curso", "value": "Blockchain Básico" },
+    { "trait_type": "Institución", "value": "Thrincs" },
+    { "trait_type": "Estado", "value": "Verified" }
+  ]
+}
+```
+
+---
+
+# 📁 Estructura del proyecto
+
+```
 thrincs-demo
 │
 ├─ contracts
@@ -105,270 +171,261 @@ thrincs-demo
 ├─ package.json
 ├─ server.js
 └─ README.md
-Requisitos
+```
+
+---
+
+# ⚙️ Requisitos
 
 Instalar previamente:
 
-Node.js
-npm
-MetaMask
+- Node.js
+- npm
+- MetaMask
 
-Verificar:
+Verificar instalación:
 
+```bash
 node -v
 npm -v
-Instalación del proyecto
+```
+
+---
+
+# 📦 Instalación
 
 Entrar al proyecto:
 
+```bash
 cd thrincs-demo
+```
 
 Instalar dependencias:
 
+```bash
 npm install
+```
 
 Si faltan dependencias:
 
+```bash
 npm install express
 npm install @openzeppelin/contracts@4.9.6
 npm install --save-dev hardhat@2.22.10
 npm install --save-dev @nomicfoundation/hardhat-toolbox@hh2
-Compilar el contrato
+```
+
+---
+
+# 🔨 Compilar contrato
+
+```bash
 npx hardhat clean
 npx hardhat compile
+```
 
 Salida esperada:
 
+```
 Compiled X Solidity files successfully
-Levantar la blockchain local
+```
 
-Abrir una terminal y ejecutar:
+---
 
+# ⛓ Levantar blockchain local
+
+```bash
 npx hardhat node
+```
 
-Esto inicia una blockchain local y mostrará cuentas con ETH de prueba.
+Esto inicia una blockchain local y generará cuentas con ETH de prueba.
 
 Ejemplo:
 
+```
 Account #0: 0xf39Fd6e...
 Private Key: 0xac0974be...
+```
 
-No cerrar esta terminal.
+⚠️ No cerrar esta terminal.
 
-Desplegar el contrato
+---
 
-En otra terminal ejecutar:
+# 🚀 Desplegar contrato
 
+En otra terminal:
+
+```bash
 npx hardhat run scripts/deploy.js --network localhost
+```
 
 Salida esperada:
 
+```
 Deploying with: 0xf39Fd6e...
 ThrincsDemoSBT deployed at: 0x123ABC...
+```
 
 Copiar la dirección del contrato.
 
-Configurar el frontend
+---
+
+# ⚙️ Configurar frontend
 
 Editar archivo:
 
+```
 public/app.js
+```
 
 Cambiar:
 
+```javascript
 const contractAddress = "PEGAR_DIRECCION_AQUI";
-
-por la dirección del deploy.
+```
 
 También editar:
 
+```
 public/verify.html
+```
 
-y reemplazar:
+---
 
-const contractAddress = "PEGAR_DIRECCION_AQUI";
-Levantar servidor web
+# 🌐 Levantar servidor
+
+```bash
 node server.js
+```
 
 Salida esperada:
 
+```
 Demo corriendo en http://localhost:3000
-Abrir la aplicación
+```
 
-Ir al navegador:
+---
 
+# 💻 Abrir aplicación
+
+Ir en el navegador:
+
+```
 http://localhost:3000
-Configurar MetaMask
+```
 
-Agregar red personalizada:
+---
 
-Network Name:
+# 🦊 Configurar MetaMask
 
-Hardhat Local
+Agregar red personalizada.
 
-RPC URL:
+| Campo | Valor |
+|------|------|
+| Network Name | Hardhat Local |
+| RPC URL | http://127.0.0.1:8545 |
+| Chain ID | 31337 |
+| Currency Symbol | ETH |
 
-http://127.0.0.1:8545
+---
 
-Chain ID:
+# 🔑 Importar cuenta de Hardhat
 
-31337
-
-Currency Symbol:
-
-ETH
-
-Block Explorer:
-
-vacío
-Importar una cuenta de Hardhat
-
-Desde la terminal donde corre Hardhat copiar una private key.
+Copiar una **private key** del nodo.
 
 Ejemplo:
 
+```
 0x59c6995e998f97a5a0044976f...
+```
 
 En MetaMask:
 
+```
 Import Account
+```
 
 Pegar la private key.
 
-Emitir un certificado
+---
 
-En la página:
+# 🎓 Emitir certificado
 
-Conectar MetaMask
+En la aplicación:
 
-Escribir wallet del alumno
-
-Colocar metadata URI
-
-Escribir hash del documento
-
-Presionar
-
-Crear NFT certificado
+1️⃣ Conectar MetaMask  
+2️⃣ Escribir wallet del alumno  
+3️⃣ Colocar metadata URI  
+4️⃣ Escribir hash del documento  
+5️⃣ Presionar **Crear NFT certificado**
 
 Salida esperada:
 
+```
 NFT creado correctamente
 TX: 0x....
 Token ID: 1
-Verificar un certificado
+```
 
-Ir a:
+---
 
+# 🔍 Verificar certificado
+
+Abrir:
+
+```
 http://localhost:3000/verify.html
+```
 
 Ingresar:
 
+```
 Token ID
-
-Presionar:
-
-Verificar certificado
+```
 
 Se mostrará:
 
-imagen
+- imagen del certificado
+- metadata
+- owner
+- issuer
+- hash
+- atributos
 
-metadata
+---
 
-owner
+# 🎨 Personalización
 
-issuer
+## Cambiar imagen del certificado
 
-hash
+Reemplazar:
 
-atributos
-
-Personalización del proyecto
-
-Este demo puede adaptarse fácilmente a otros sistemas de certificación.
-
-Cambiar imagen del certificado
-
-Reemplazar archivo:
-
+```
 public/assets/certificate-demo.png
+```
 
-por cualquier imagen personalizada.
+Por cualquier imagen:
 
-Ejemplo:
+- diploma
+- badge
+- constancia
+- credencial
 
-diploma
+---
 
-badge
+## Cambiar metadata
 
-credencial
+Editar:
 
-constancia
-
-Cambiar metadata del certificado
-
-Editar archivo:
-
+```
 public/metadata/1.json
+```
 
-Ejemplo:
+---
 
-{
-  "name": "Certificado Blockchain",
-  "description": "Certificado verificable en blockchain",
-  "image": "http://localhost:3000/assets/certificate-demo.png",
-  "attributes": [
-    { "trait_type": "Alumno", "value": "Juan Pérez" },
-    { "trait_type": "Curso", "value": "Blockchain Básico" },
-    { "trait_type": "Institución", "value": "Thrincs" },
-    { "trait_type": "Estado", "value": "Verified" }
-  ]
-}
-Cambiar wallet del alumno
+# 🔁 Flujo completo
 
-En el formulario se puede ingresar cualquier dirección válida.
-
-Ejemplo:
-
-0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC
-Cambiar hash del documento
-
-El campo:
-
-Hash SHA-256 del documento
-
-puede contener cualquier identificador único.
-
-Ejemplo:
-
-demo-certificado-juan-2026
-
-o un hash real.
-
-Reinicio de Hardhat
-
-Si se reinicia:
-
-npx hardhat node
-
-entonces:
-
-desaparece la blockchain local
-
-desaparecen los NFTs
-
-desaparece el contrato
-
-Se debe repetir:
-
-npx hardhat run scripts/deploy.js --network localhost
-
-y actualizar nuevamente la dirección del contrato en:
-
-public/app.js
-public/verify.html
-Flujo completo del sistema
+```
 Alumno
    ↓
 Sube certificado
@@ -377,27 +434,31 @@ Se genera hash
    ↓
 Se crea metadata
    ↓
-Se emite NFT/SBT
+Se emite NFT (Soulbound)
    ↓
 Se guarda en blockchain
    ↓
 Certificado verificable públicamente
-Propósito del proyecto
+```
 
-Este demo representa el concepto de:
+---
 
-credenciales verificables en blockchain
+# 🎯 Propósito
 
-Aplicable a:
+Este demo demuestra cómo utilizar blockchain para **credenciales verificables**.
 
-diplomas
+Aplicaciones reales:
 
-certificaciones
+- diplomas
+- certificaciones
+- badges educativos
+- constancias laborales
+- licencias profesionales
 
-badges
+---
 
-constancias
+# 👨‍💻 Proyecto
 
-licencias
+**Thrincs – Blockchain Credentials**
 
-credenciales profesionales
+Sistema conceptual para emisión y verificación de certificados digitales utilizando tecnología blockchain.
