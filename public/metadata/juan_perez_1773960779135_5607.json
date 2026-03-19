@@ -1,0 +1,36 @@
+{
+  "name": "Thrincs Certificate - Juan Pérez",
+  "description": "Certificado digital verificable generado dinámicamente en localhost para el proyecto Thrincs.",
+  "image": "http://localhost:3000/generated/juan_perez_1773960779135_5607.png",
+  "external_url": "http://localhost:3000",
+  "attributes": [
+    {
+      "trait_type": "Alumno",
+      "value": "Juan Pérez"
+    },
+    {
+      "trait_type": "Curso",
+      "value": "Blockchain Fundamentals"
+    },
+    {
+      "trait_type": "Institución",
+      "value": "Thrincs"
+    },
+    {
+      "trait_type": "Fecha de emisión",
+      "value": "2026-03-19"
+    },
+    {
+      "trait_type": "Folio",
+      "value": "THR-2026-001"
+    },
+    {
+      "trait_type": "Estado",
+      "value": "Verified"
+    },
+    {
+      "trait_type": "Hash SHA-256",
+      "value": "8fab9f7dc36318092a03788d77b6ec7f9d06d1598196015c8975c211d7e8aa88"
+    }
+  ]
+}

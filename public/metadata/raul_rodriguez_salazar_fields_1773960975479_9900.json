@@ -1,0 +1,36 @@
+{
+  "name": "Thrincs Certificate - Raul Rodriguez Salazar Fields",
+  "description": "Certificado digital verificable generado dinámicamente en localhost para el proyecto Thrincs.",
+  "image": "http://localhost:3000/generated/raul_rodriguez_salazar_fields_1773960975479_9900.png",
+  "external_url": "http://localhost:3000",
+  "attributes": [
+    {
+      "trait_type": "Alumno",
+      "value": "Raul Rodriguez Salazar Fields"
+    },
+    {
+      "trait_type": "Curso",
+      "value": "Blockchain Fundamentals"
+    },
+    {
+      "trait_type": "Institución",
+      "value": "Thrincs"
+    },
+    {
+      "trait_type": "Fecha de emisión",
+      "value": "2026-03-19"
+    },
+    {
+      "trait_type": "Folio",
+      "value": "THR-2026-001"
+    },
+    {
+      "trait_type": "Estado",
+      "value": "Verified"
+    },
+    {
+      "trait_type": "Hash SHA-256",
+      "value": "42ae7a281cdc69d1097f9bd229bd9b812dff0522a6a9ac422da11e84de103c99"
+    }
+  ]
+}

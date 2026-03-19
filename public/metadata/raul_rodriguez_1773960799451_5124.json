@@ -1,0 +1,36 @@
+{
+  "name": "Thrincs Certificate - Raul Rodriguez",
+  "description": "Certificado digital verificable generado dinámicamente en localhost para el proyecto Thrincs.",
+  "image": "http://localhost:3000/generated/raul_rodriguez_1773960799451_5124.png",
+  "external_url": "http://localhost:3000",
+  "attributes": [
+    {
+      "trait_type": "Alumno",
+      "value": "Raul Rodriguez"
+    },
+    {
+      "trait_type": "Curso",
+      "value": "Blockchain Fundamentals"
+    },
+    {
+      "trait_type": "Institución",
+      "value": "Thrincs"
+    },
+    {
+      "trait_type": "Fecha de emisión",
+      "value": "2026-03-19"
+    },
+    {
+      "trait_type": "Folio",
+      "value": "THR-2026-001"
+    },
+    {
+      "trait_type": "Estado",
+      "value": "Verified"
+    },
+    {
+      "trait_type": "Hash SHA-256",
+      "value": "9671d7b92cbd61e66381f721aea197ba22fb0b038996d9f59b1e7b765fa38fd5"
+    }
+  ]
+}

@@ -1,0 +1,36 @@
+{
+  "name": "Thrincs Certificate - Raul Salazar",
+  "description": "Certificado digital verificable generado dinámicamente en localhost para el proyecto Thrincs.",
+  "image": "http://localhost:3000/generated/raul_salazar_1773961490622_4032.png",
+  "external_url": "http://localhost:3000",
+  "attributes": [
+    {
+      "trait_type": "Alumno",
+      "value": "Raul Salazar"
+    },
+    {
+      "trait_type": "Curso",
+      "value": "Blockchain Fundamentals"
+    },
+    {
+      "trait_type": "Institución",
+      "value": "Thrincs"
+    },
+    {
+      "trait_type": "Fecha de emisión",
+      "value": "2026-03-19"
+    },
+    {
+      "trait_type": "Folio",
+      "value": "THR-2026-001"
+    },
+    {
+      "trait_type": "Estado",
+      "value": "Verified"
+    },
+    {
+      "trait_type": "Hash SHA-256",
+      "value": "fe8c03a9190e4f6eccbe7e36acba00fdb63a1e089b6f96cfd1448a84e07aecf0"
+    }
+  ]
+}

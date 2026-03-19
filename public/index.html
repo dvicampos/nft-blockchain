@@ -3,124 +3,218 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Thrincs Demo Certificate NFT</title>
-  <link rel="stylesheet" href="/styles.css" />
+  <title>Thrincs - Generador local de certificados</title>
+  <style>
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #0b1736, #111827);
+      color: white;
+      padding: 32px;
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      margin-top: 0;
+      font-size: 40px;
+    }
+
+    p {
+      color: #cbd5e1;
+      line-height: 1.6;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      margin-top: 24px;
+    }
+
+    .card {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 20px;
+      padding: 20px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 14px;
+      color: #cbd5e1;
+    }
+
+    input {
+      width: 100%;
+      padding: 12px;
+      border-radius: 12px;
+      border: none;
+      background: #172554;
+      color: white;
+      margin-bottom: 14px;
+    }
+
+    button {
+      width: 100%;
+      border: none;
+      border-radius: 14px;
+      padding: 14px;
+      background: linear-gradient(135deg, #2563eb, #4f46e5);
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+      font-size: 15px;
+    }
+
+    .result-block {
+      margin-top: 14px;
+      padding: 14px;
+      border-radius: 14px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.08);
+      word-break: break-word;
+    }
+
+    a {
+      color: #93c5fd;
+    }
+
+    img {
+      max-width: 100%;
+      border-radius: 16px;
+      display: block;
+      margin-top: 18px;
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .ok {
+      color: #86efac;
+    }
+
+    .error {
+      color: #fca5a5;
+    }
+
+    @media (max-width: 900px) {
+      .grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
 </head>
 <body>
-  <main class="page">
-    <section class="hero">
-      <div class="badge">Verified Blockchain Certificate Demo</div>
-      <h1>Thrincs - Certificado digital verificable</h1>
-      <p>
-        Demo funcional del proyecto Thrincs para representar la emisión de certificados
-        blockchain mediante un NFT tipo Soulbound, utilizando metadata, hash de documento,
-        imagen de certificado y verificación posterior.
-      </p>
-      <div class="top-actions">
-        <a href="/verify.html">Ir a verificación</a>
-        <a href="/metadata/1.json" target="_blank">Ver metadata JSON</a>
-      </div>
-    </section>
+  <div class="container">
+    <h1>Thrincs - Generación dinámica local</h1>
+    <p>
+      Este demo genera la imagen del certificado en el servidor local,
+      guarda la imagen, crea el metadata y deja lista la URL para usarla
+      después en tu NFT o sistema de credenciales.
+    </p>
 
-    <section class="grid">
-      <article class="card">
-        <h2>Mint certificado</h2>
+    <div class="grid">
+      <div class="card">
+        <h2>Datos del certificado</h2>
 
-        <button id="connectBtn">Conectar MetaMask</button>
-        <p class="small" id="walletStatus">Wallet no conectada</p>
+        <label>Nombre del alumno</label>
+        <input id="studentName" value="Juan Pérez" />
 
-        <label class="label">Wallet del alumno</label>
-        <input id="studentAddress" value="0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC" />
+        <label>Curso</label>
+        <input id="courseName" value="Blockchain Fundamentals" />
 
-        <label class="label">Metadata URI</label>
-        <input id="metadataURI" value="http://localhost:3000/metadata/1.json" />
+        <label>Institución</label>
+        <input id="institution" value="Thrincs" />
 
-        <label class="label">Hash SHA-256 del documento</label>
-        <input id="documentHash" value="demo-certificado-juan-2026" />
+        <label>Fecha de emisión</label>
+        <input id="issueDate" value="2026-03-19" />
 
-        <button id="mintBtn">Crear NFT certificado</button>
-        <p class="small" id="mintStatus">Esperando acción...</p>
-      </article>
+        <label>Folio</label>
+        <input id="folio" value="THR-2026-001" />
 
-      <article class="card">
-        <h2>Preview visual del certificado</h2>
-        <img
-          src="/assets/certificate-demo.png"
-          alt="Certificado Thrincs"
-          class="preview-image"
-        />
-        <div class="data-block">
-          <strong>Modelo de producto final</strong>
-          <div class="small">
-            Esta vista representa la lógica del proyecto Thrincs: emisión de un certificado
-            digital verificable, asociado a metadata, hash de documento e identidad on-chain.
-          </div>
-        </div>
-        <div class="data-block">
-          <strong>Concepto</strong>
-          <div class="small">
-            El certificado no se plantea como arte NFT, sino como una credencial verificable
-            y trazable en blockchain, ideal para diplomas, constancias o certificaciones.
-          </div>
-        </div>
-      </article>
-    </section>
+        <button id="generateBtn">Generar certificado e metadata</button>
 
-    <section class="card" id="certificateResult" style="display:none; margin-top:24px;">
-      <div class="badge">Mint exitoso</div>
-      <h2>Certificado emitido</h2>
-
-      <div class="grid">
-        <div>
-          <img id="certImage" class="preview-image" alt="Certificado emitido" />
-        </div>
-
-        <div>
-          <h3 id="certName"></h3>
-          <p class="small" id="certDescription"></p>
-
-          <div class="data-block">
-            <strong>Token ID</strong>
-            <div id="certTokenId"></div>
-          </div>
-
-          <div class="data-block">
-            <strong>Owner / Alumno</strong>
-            <div id="certOwner"></div>
-          </div>
-
-          <div class="data-block">
-            <strong>Issuer</strong>
-            <div id="certIssuer"></div>
-          </div>
-
-          <div class="data-block">
-            <strong>Hash del documento</strong>
-            <div id="certHash"></div>
-          </div>
-
-          <div class="data-block">
-            <strong>Metadata URI</strong>
-            <a id="certMetadata" target="_blank" class="small"></a>
-          </div>
-
-          <div class="data-block">
-            <strong>TX Hash</strong>
-            <div id="certTx" class="small"></div>
-          </div>
-
-          <div class="top-actions">
-            <a id="verifyLink">Verificar certificado</a>
-          </div>
-        </div>
+        <div id="status" class="result-block">Esperando acción...</div>
       </div>
 
-      <h3 style="margin-top: 24px;">Metadata visual</h3>
-      <div id="certAttributes" class="meta-list"></div>
-    </section>
-  </main>
+      <div class="card">
+        <h2>Resultado</h2>
 
-  <script src="https://cdn.jsdelivr.net/npm/ethers@6.13.2/dist/ethers.umd.min.js"></script>
-  <script src="/app.js"></script>
+        <div class="result-block">
+          <strong>URL de la imagen</strong>
+          <div id="imageUrl">-</div>
+        </div>
+
+        <div class="result-block">
+          <strong>URL del metadata</strong>
+          <div id="metadataUrl">-</div>
+        </div>
+
+        <div class="result-block">
+          <strong>Hash SHA-256</strong>
+          <div id="documentHash">-</div>
+        </div>
+
+        <img id="previewImage" style="display:none;" alt="Certificado generado" />
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const generateBtn = document.getElementById("generateBtn");
+    const statusEl = document.getElementById("status");
+    const imageUrlEl = document.getElementById("imageUrl");
+    const metadataUrlEl = document.getElementById("metadataUrl");
+    const documentHashEl = document.getElementById("documentHash");
+    const previewImage = document.getElementById("previewImage");
+
+    generateBtn.addEventListener("click", async () => {
+      try {
+        statusEl.innerHTML = "Generando certificado...";
+        statusEl.className = "result-block";
+
+        const payload = {
+          studentName: document.getElementById("studentName").value.trim(),
+          courseName: document.getElementById("courseName").value.trim(),
+          institution: document.getElementById("institution").value.trim(),
+          issueDate: document.getElementById("issueDate").value.trim(),
+          folio: document.getElementById("folio").value.trim()
+        };
+
+        const response = await fetch("/api/generate-certificate", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(payload)
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.error || "Error al generar");
+        }
+
+        imageUrlEl.innerHTML = `<a href="${data.imageUrl}" target="_blank">${data.imageUrl}</a>`;
+        metadataUrlEl.innerHTML = `<a href="${data.metadataUrl}" target="_blank">${data.metadataUrl}</a>`;
+        documentHashEl.textContent = data.documentHash;
+
+        previewImage.src = data.imageUrl;
+        previewImage.style.display = "block";
+
+        statusEl.innerHTML = `
+          <span class="ok">Certificado generado correctamente ✅</span><br><br>
+          Ya puedes usar esta URL en el campo <strong>image</strong> del metadata.
+        `;
+      } catch (error) {
+        statusEl.innerHTML = `<span class="error">${error.message}</span>`;
+      }
+    });
+  </script>
 </body>
 </html>
