@@ -1,0 +1,36 @@
+{
+  "name": "Thrincs Certificate - Victor Rodriguez",
+  "description": "Certificado digital verificable generado dinámicamente en localhost para el proyecto Thrincs.",
+  "image": "http://localhost:3000/generated/victor_rodriguez_1773971811075_6706.png",
+  "external_url": "http://localhost:3000/verify.html",
+  "attributes": [
+    {
+      "trait_type": "Alumno",
+      "value": "Victor Rodriguez"
+    },
+    {
+      "trait_type": "Curso",
+      "value": "Python Django"
+    },
+    {
+      "trait_type": "Institución",
+      "value": "Thrincs"
+    },
+    {
+      "trait_type": "Fecha de emisión",
+      "value": "2026-03-19"
+    },
+    {
+      "trait_type": "Folio",
+      "value": "THR-2026-002"
+    },
+    {
+      "trait_type": "Estado",
+      "value": "Verified"
+    },
+    {
+      "trait_type": "Hash SHA-256",
+      "value": "7e1604a623c09d4774d0a2b656bf56c85ca375f0e305ae94098da2a928adc43f"
+    }
+  ]
+}

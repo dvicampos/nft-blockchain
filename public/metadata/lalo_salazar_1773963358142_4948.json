@@ -1,0 +1,36 @@
+{
+  "name": "Thrincs Certificate - Lalo Salazar",
+  "description": "Certificado digital verificable generado dinámicamente en localhost para el proyecto Thrincs.",
+  "image": "http://localhost:3000/generated/lalo_salazar_1773963358142_4948.png",
+  "external_url": "http://localhost:3000",
+  "attributes": [
+    {
+      "trait_type": "Alumno",
+      "value": "Lalo Salazar"
+    },
+    {
+      "trait_type": "Curso",
+      "value": "Blockchain Fundamentals"
+    },
+    {
+      "trait_type": "Institución",
+      "value": "Thrincs"
+    },
+    {
+      "trait_type": "Fecha de emisión",
+      "value": "2026-03-19"
+    },
+    {
+      "trait_type": "Folio",
+      "value": "THR-2026-001"
+    },
+    {
+      "trait_type": "Estado",
+      "value": "Verified"
+    },
+    {
+      "trait_type": "Hash SHA-256",
+      "value": "99143a00ad8874dd8a32cac99ef488ecee99c797312d4fa82b30cd99848e21ab"
+    }
+  ]
+}

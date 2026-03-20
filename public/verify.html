@@ -3,100 +3,90 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Verificar Certificado - Thrincs</title>
-  <link rel="stylesheet" href="/styles.css" />
+  <title>Verificar Certificado</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #0b1736;
+      color: white;
+      padding: 32px;
+    }
+    .container { max-width: 1000px; margin: 0 auto; }
+    .card {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 20px;
+      padding: 22px;
+      margin-bottom: 20px;
+    }
+    input, button {
+      width: 100%;
+      padding: 12px;
+      border-radius: 12px;
+      border: none;
+      margin-bottom: 12px;
+    }
+    input { background: #172554; color: white; }
+    button {
+      background: linear-gradient(135deg, #2563eb, #4f46e5);
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    img {
+      max-width: 100%;
+      border-radius: 16px;
+      display: block;
+      margin-top: 14px;
+    }
+    .ok { color: #86efac; }
+    .error { color: #fca5a5; }
+    a { color: #93c5fd; }
+  </style>
 </head>
 <body>
-  <main class="page verify-section">
-    <section class="hero">
-      <div class="badge">Verification Portal</div>
+  <div class="container">
+    <div class="card">
       <h1>Verificación de certificado</h1>
-      <p>
-        Consulta el certificado emitido en la demo de Thrincs mediante su Token ID,
-        mostrando owner, issuer, hash, metadata y la representación visual del documento.
-      </p>
-      <div class="top-actions">
-        <a href="/index.html">Volver al mint</a>
-      </div>
-    </section>
+      <input id="tokenIdInput" placeholder="Ingresa Token ID" />
+      <button id="verifyBtn">Verificar</button>
+      <div id="status">Esperando consulta...</div>
+    </div>
 
-    <section class="card">
-      <h2>Buscar por Token ID</h2>
-      <label class="label">Token ID</label>
-      <input id="verifyTokenId" placeholder="Ej. 1" />
-      <button id="verifyBtn">Verificar certificado</button>
-      <p class="small" id="verifyStatus">Esperando consulta...</p>
-    </section>
-
-    <section class="card" id="verifyResult" style="display:none; margin-top:24px;">
-      <div class="badge">Verified ✅</div>
-
-      <div class="grid">
-        <div>
-          <img id="verifyImage" class="preview-image" alt="Certificado verificado" />
-        </div>
-
-        <div>
-          <h2 id="verifyName"></h2>
-          <p class="small" id="verifyDescription"></p>
-
-          <div class="data-block">
-            <strong>Token ID</strong>
-            <div id="verifyTokenIdValue"></div>
-          </div>
-
-          <div class="data-block">
-            <strong>Owner / Alumno</strong>
-            <div id="verifyOwner"></div>
-          </div>
-
-          <div class="data-block">
-            <strong>Issuer</strong>
-            <div id="verifyIssuer"></div>
-          </div>
-
-          <div class="data-block">
-            <strong>Hash del documento</strong>
-            <div id="verifyHash"></div>
-          </div>
-
-          <div class="data-block">
-            <strong>Metadata URI</strong>
-            <a id="verifyMetadata" target="_blank" class="small"></a>
-          </div>
-        </div>
-      </div>
-
-      <h3 style="margin-top: 24px;">Atributos</h3>
-      <div id="verifyAttributes" class="meta-list"></div>
-    </section>
-  </main>
+    <div class="card" id="resultCard" style="display:none;">
+      <h2 id="name"></h2>
+      <p id="description"></p>
+      <p><strong>Owner:</strong> <span id="owner"></span></p>
+      <p><strong>Issuer:</strong> <span id="issuer"></span></p>
+      <p><strong>Hash:</strong> <span id="hash"></span></p>
+      <p><strong>Metadata:</strong> <a id="metadataLink" target="_blank"></a></p>
+      <img id="image" alt="Certificado" />
+    </div>
+  </div>
 
   <script src="https://cdn.jsdelivr.net/npm/ethers@6.13.2/dist/ethers.umd.min.js"></script>
   <script>
-    const contractAddress = "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0";
+    const contractAddress = "PEGA_AQUI_TU_DIRECCION_DEPLOY";
+
     const contractABI = [
       "function certificates(uint256) view returns (string metadataURI, string documentHash, address issuer, uint256 issuedAt)",
       "function ownerOf(uint256 tokenId) view returns (address)",
       "function tokenURI(uint256 tokenId) view returns (string)"
     ];
 
-    let provider;
-    let contract;
+    const provider = new ethers.JsonRpcProvider("http://127.0.0.1:8545");
+    const contract = new ethers.Contract(contractAddress, contractABI, provider);
 
-    const verifyBtn = document.getElementById("verifyBtn");
-    const verifyStatus = document.getElementById("verifyStatus");
-    const verifyResult = document.getElementById("verifyResult");
-
-    async function setupProvider() {
-      provider = new ethers.JsonRpcProvider("http://127.0.0.1:8545");
-      contract = new ethers.Contract(contractAddress, contractABI, provider);
-    }
-
-    async function loadCertificate(tokenId) {
+    document.getElementById("verifyBtn").addEventListener("click", async () => {
       try {
-        verifyStatus.innerHTML = "Consultando certificado...";
+        const tokenId = document.getElementById("tokenIdInput").value.trim();
+        if (!tokenId) {
+          document.getElementById("status").innerHTML = '<span class="error">Ingresa un Token ID</span>';
+          return;
+        }
 
+        document.getElementById("status").textContent = "Consultando...";
         const certData = await contract.certificates(tokenId);
         const owner = await contract.ownerOf(tokenId);
         const tokenUri = await contract.tokenURI(tokenId);
@@ -104,58 +94,21 @@
         const metadataRes = await fetch(tokenUri);
         const metadata = await metadataRes.json();
 
-        document.getElementById("verifyImage").src = metadata.image;
-        document.getElementById("verifyName").textContent = metadata.name;
-        document.getElementById("verifyDescription").textContent = metadata.description;
-        document.getElementById("verifyTokenIdValue").textContent = tokenId;
-        document.getElementById("verifyOwner").textContent = owner;
-        document.getElementById("verifyIssuer").textContent = certData.issuer;
-        document.getElementById("verifyHash").textContent = certData.documentHash;
-        document.getElementById("verifyMetadata").href = tokenUri;
-        document.getElementById("verifyMetadata").textContent = tokenUri;
+        document.getElementById("name").textContent = metadata.name;
+        document.getElementById("description").textContent = metadata.description;
+        document.getElementById("owner").textContent = owner;
+        document.getElementById("issuer").textContent = certData.issuer;
+        document.getElementById("hash").textContent = certData.documentHash;
+        document.getElementById("metadataLink").href = tokenUri;
+        document.getElementById("metadataLink").textContent = tokenUri;
+        document.getElementById("image").src = metadata.image;
 
-        const container = document.getElementById("verifyAttributes");
-        container.innerHTML = "";
-
-        if (metadata.attributes && metadata.attributes.length) {
-          metadata.attributes.forEach((attr) => {
-            const item = document.createElement("div");
-            item.className = "meta-item";
-            item.innerHTML = `
-              <strong>${attr.trait_type}</strong>
-              <div>${attr.value}</div>
-            `;
-            container.appendChild(item);
-          });
-        }
-
-        verifyResult.style.display = "block";
-        verifyStatus.innerHTML = '<span class="success">Certificado verificado correctamente ✅</span>';
+        document.getElementById("resultCard").style.display = "block";
+        document.getElementById("status").innerHTML = '<span class="ok">Certificado verificado correctamente ✅</span>';
       } catch (error) {
-        verifyResult.style.display = "none";
-        verifyStatus.innerHTML = `<span class="error">${error.shortMessage || error.message}</span>`;
+        document.getElementById("status").innerHTML = `<span class="error">${error.shortMessage || error.message}</span>`;
       }
-    }
-
-    verifyBtn.addEventListener("click", async () => {
-      const tokenId = document.getElementById("verifyTokenId").value.trim();
-      if (!tokenId) {
-        verifyStatus.innerHTML = '<span class="error">Ingresa un Token ID</span>';
-        return;
-      }
-      await loadCertificate(tokenId);
     });
-
-    (async () => {
-      await setupProvider();
-
-      const params = new URLSearchParams(window.location.search);
-      const tokenId = params.get("tokenId");
-      if (tokenId) {
-        document.getElementById("verifyTokenId").value = tokenId;
-        await loadCertificate(tokenId);
-      }
-    })();
   </script>
 </body>
 </html>

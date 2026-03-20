@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Thrincs - Generador local de certificados</title>
+  <title>Thrincs - Flujo real automático</title>
   <style>
     * { box-sizing: border-box; }
 
@@ -16,19 +16,12 @@
     }
 
     .container {
-      max-width: 1100px;
+      max-width: 1200px;
       margin: 0 auto;
     }
 
-    h1 {
-      margin-top: 0;
-      font-size: 40px;
-    }
-
-    p {
-      color: #cbd5e1;
-      line-height: 1.6;
-    }
+    h1 { margin-top: 0; font-size: 42px; }
+    p { color: #cbd5e1; line-height: 1.6; }
 
     .grid {
       display: grid;
@@ -41,7 +34,7 @@
       background: rgba(255,255,255,0.05);
       border: 1px solid rgba(255,255,255,0.08);
       border-radius: 20px;
-      padding: 20px;
+      padding: 22px;
     }
 
     label {
@@ -71,6 +64,11 @@
       font-weight: bold;
       cursor: pointer;
       font-size: 15px;
+      margin-bottom: 12px;
+    }
+
+    .secondary {
+      background: rgba(255,255,255,0.1);
     }
 
     .result-block {
@@ -82,9 +80,8 @@
       word-break: break-word;
     }
 
-    a {
-      color: #93c5fd;
-    }
+    .ok { color: #86efac; }
+    .error { color: #fca5a5; }
 
     img {
       max-width: 100%;
@@ -94,16 +91,24 @@
       border: 1px solid rgba(255,255,255,0.08);
     }
 
-    .ok {
-      color: #86efac;
+    a { color: #93c5fd; }
+
+    .meta-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-top: 16px;
     }
 
-    .error {
-      color: #fca5a5;
+    .meta-item {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 14px;
+      padding: 12px;
     }
 
     @media (max-width: 900px) {
-      .grid {
+      .grid, .meta-grid {
         grid-template-columns: 1fr;
       }
     }
@@ -111,19 +116,24 @@
 </head>
 <body>
   <div class="container">
-    <h1>Thrincs - Generación dinámica local</h1>
+    <h1>Thrincs - Emisión automática de certificado NFT</h1>
     <p>
-      Este demo genera la imagen del certificado en el servidor local,
-      guarda la imagen, crea el metadata y deja lista la URL para usarla
-      después en tu NFT o sistema de credenciales.
+      Este flujo genera el certificado en el servidor local, crea el metadata
+      y mintea automáticamente el NFT tipo Soulbound en tu contrato local.
     </p>
 
     <div class="grid">
       <div class="card">
-        <h2>Datos del certificado</h2>
+        <h2>1. Datos del certificado</h2>
+
+        <button id="connectBtn">Conectar MetaMask</button>
+        <div id="walletStatus" class="result-block">Wallet no conectada</div>
 
         <label>Nombre del alumno</label>
         <input id="studentName" value="Juan Pérez" />
+
+        <label>Wallet del alumno</label>
+        <input id="studentAddress" value="0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC" />
 
         <label>Curso</label>
         <input id="courseName" value="Blockchain Fundamentals" />
@@ -137,13 +147,13 @@
         <label>Folio</label>
         <input id="folio" value="THR-2026-001" />
 
-        <button id="generateBtn">Generar certificado e metadata</button>
+        <button id="runFlowBtn">Generar certificado + metadata + mint NFT</button>
 
-        <div id="status" class="result-block">Esperando acción...</div>
+        <div id="flowStatus" class="result-block">Esperando acción...</div>
       </div>
 
       <div class="card">
-        <h2>Resultado</h2>
+        <h2>2. Resultado del flujo</h2>
 
         <div class="result-block">
           <strong>URL de la imagen</strong>
@@ -160,61 +170,283 @@
           <div id="documentHash">-</div>
         </div>
 
+        <div class="result-block">
+          <strong>TX Hash</strong>
+          <div id="txHash">-</div>
+        </div>
+
+        <div class="result-block">
+          <strong>Token ID</strong>
+          <div id="tokenId">-</div>
+        </div>
+
         <img id="previewImage" style="display:none;" alt="Certificado generado" />
       </div>
     </div>
+
+    <div class="card" style="margin-top:24px; display:none;" id="finalCard">
+      <h2>3. Certificado emitido</h2>
+      <div id="finalTitle" class="result-block"></div>
+      <div class="meta-grid" id="attributesGrid"></div>
+    </div>
   </div>
 
-  <script>
-    const generateBtn = document.getElementById("generateBtn");
-    const statusEl = document.getElementById("status");
-    const imageUrlEl = document.getElementById("imageUrl");
-    const metadataUrlEl = document.getElementById("metadataUrl");
-    const documentHashEl = document.getElementById("documentHash");
-    const previewImage = document.getElementById("previewImage");
+  <script src="https://cdn.jsdelivr.net/npm/ethers@6.13.2/dist/ethers.umd.min.js"></script>
+<script>
+  const contractAddress = "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0";
 
-    generateBtn.addEventListener("click", async () => {
+  const contractABI = [
+    "function mintCertificate(address student, string metadataURI, string documentHash) external returns (uint256)",
+    "function certificates(uint256) view returns (string metadataURI, string documentHash, address issuer, uint256 issuedAt)",
+    "function ownerOf(uint256 tokenId) view returns (address)",
+    "function tokenURI(uint256 tokenId) view returns (string)",
+    "function usedHashes(string) view returns (bool)",
+    "event CertificateMinted(uint256 indexed tokenId, address indexed student, address indexed issuer, string metadataURI, string documentHash)"
+  ];
+
+  const HARDHAT_CHAIN_ID_HEX = "0x7a69";
+  const HARDHAT_NETWORK_PARAMS = {
+    chainId: HARDHAT_CHAIN_ID_HEX,
+    chainName: "Hardhat Local",
+    nativeCurrency: {
+      name: "ETH",
+      symbol: "ETH",
+      decimals: 18
+    },
+    rpcUrls: ["http://127.0.0.1:8545"],
+    blockExplorerUrls: []
+  };
+
+  let provider;
+  let signer;
+  let contract;
+
+  const connectBtn = document.getElementById("connectBtn");
+  const walletStatus = document.getElementById("walletStatus");
+  const flowStatus = document.getElementById("flowStatus");
+  const runFlowBtn = document.getElementById("runFlowBtn");
+
+  function readableError(error) {
+    console.error("FULL ERROR:", error);
+
+    return (
+      error?.reason ||
+      error?.info?.error?.message ||
+      error?.error?.message ||
+      error?.data?.message ||
+      error?.shortMessage ||
+      error?.message ||
+      "Error desconocido"
+    );
+  }
+
+  async function connectWallet() {
+    if (!window.ethereum) {
+      walletStatus.innerHTML = '<span class="error">MetaMask no detectado</span>';
+      return false;
+    }
+
+    try {
       try {
-        statusEl.innerHTML = "Generando certificado...";
-        statusEl.className = "result-block";
-
-        const payload = {
-          studentName: document.getElementById("studentName").value.trim(),
-          courseName: document.getElementById("courseName").value.trim(),
-          institution: document.getElementById("institution").value.trim(),
-          issueDate: document.getElementById("issueDate").value.trim(),
-          folio: document.getElementById("folio").value.trim()
-        };
-
-        const response = await fetch("/api/generate-certificate", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify(payload)
+        await window.ethereum.request({
+          method: "wallet_switchEthereumChain",
+          params: [{ chainId: HARDHAT_CHAIN_ID_HEX }]
         });
+      } catch (switchError) {
+        if (switchError.code === 4902) {
+          await window.ethereum.request({
+            method: "wallet_addEthereumChain",
+            params: [HARDHAT_NETWORK_PARAMS]
+          });
 
-        const data = await response.json();
-
-        if (!response.ok) {
-          throw new Error(data.error || "Error al generar");
+          await window.ethereum.request({
+            method: "wallet_switchEthereumChain",
+            params: [{ chainId: HARDHAT_CHAIN_ID_HEX }]
+          });
+        } else {
+          throw switchError;
         }
-
-        imageUrlEl.innerHTML = `<a href="${data.imageUrl}" target="_blank">${data.imageUrl}</a>`;
-        metadataUrlEl.innerHTML = `<a href="${data.metadataUrl}" target="_blank">${data.metadataUrl}</a>`;
-        documentHashEl.textContent = data.documentHash;
-
-        previewImage.src = data.imageUrl;
-        previewImage.style.display = "block";
-
-        statusEl.innerHTML = `
-          <span class="ok">Certificado generado correctamente ✅</span><br><br>
-          Ya puedes usar esta URL en el campo <strong>image</strong> del metadata.
-        `;
-      } catch (error) {
-        statusEl.innerHTML = `<span class="error">${error.message}</span>`;
       }
-    });
-  </script>
+
+      provider = new ethers.BrowserProvider(window.ethereum);
+      await provider.send("eth_requestAccounts", []);
+      signer = await provider.getSigner();
+
+      const network = await provider.getNetwork();
+      if (Number(network.chainId) !== 31337) {
+        walletStatus.innerHTML = '<span class="error">MetaMask no está en Hardhat Local</span>';
+        return false;
+      }
+
+      if (!ethers.isAddress(contractAddress)) {
+        walletStatus.innerHTML = '<span class="error">La dirección del contrato no es válida</span>';
+        return false;
+      }
+
+      const normalizedContractAddress = ethers.getAddress(contractAddress);
+      const code = await provider.getCode(normalizedContractAddress);
+
+      if (!code || code === "0x") {
+        walletStatus.innerHTML = '<span class="error">No hay contrato desplegado en esa dirección. Rehaz el deploy y actualiza contractAddress.</span>';
+        return false;
+      }
+
+      contract = new ethers.Contract(normalizedContractAddress, contractABI, signer);
+
+      const signerAddress = await signer.getAddress();
+      const balance = await provider.getBalance(signerAddress);
+
+      walletStatus.innerHTML = `
+        <span class="ok">Wallet conectada:</span><br>
+        ${signerAddress}<br>
+        <span class="ok">Red:</span> Hardhat Local<br>
+        <span class="ok">Balance:</span> ${ethers.formatEther(balance)} ETH
+      `;
+
+      return true;
+    } catch (error) {
+      walletStatus.innerHTML = `<span class="error">${readableError(error)}</span>`;
+      return false;
+    }
+  }
+
+  connectBtn.addEventListener("click", connectWallet);
+
+  runFlowBtn.addEventListener("click", async () => {
+    try {
+      if (!contract) {
+        const ok = await connectWallet();
+        if (!ok) return;
+      }
+
+      const studentName = document.getElementById("studentName").value.trim();
+      const rawStudentAddress = document.getElementById("studentAddress").value.trim();
+      const courseName = document.getElementById("courseName").value.trim();
+      const institution = document.getElementById("institution").value.trim();
+      const issueDate = document.getElementById("issueDate").value.trim();
+      const folio = document.getElementById("folio").value.trim();
+
+      if (!studentName || !rawStudentAddress || !courseName || !institution || !issueDate || !folio) {
+        flowStatus.innerHTML = '<span class="error">Completa todos los campos</span>';
+        return;
+      }
+
+      if (!ethers.isAddress(rawStudentAddress)) {
+        flowStatus.innerHTML = '<span class="error">La wallet del alumno no es válida</span>';
+        return;
+      }
+
+      const studentAddress = ethers.getAddress(rawStudentAddress);
+
+      flowStatus.innerHTML = "Paso 1/4: Generando certificado dinámico...";
+
+      const response = await fetch("/api/generate-certificate", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          studentName,
+          courseName,
+          institution,
+          issueDate,
+          folio
+        })
+      });
+
+      const generated = await response.json();
+
+      if (!response.ok) {
+        throw new Error(generated.error || "No se pudo generar el certificado");
+      }
+
+      document.getElementById("imageUrl").innerHTML =
+        `<a href="${generated.imageUrl}" target="_blank">${generated.imageUrl}</a>`;
+      document.getElementById("metadataUrl").innerHTML =
+        `<a href="${generated.metadataUrl}" target="_blank">${generated.metadataUrl}</a>`;
+      document.getElementById("documentHash").textContent = generated.documentHash;
+
+      const previewImage = document.getElementById("previewImage");
+      previewImage.src = generated.imageUrl;
+      previewImage.style.display = "block";
+
+      flowStatus.innerHTML = "Paso 2/4: Verificando hash en contrato...";
+
+      try {
+        const alreadyUsed = await contract.usedHashes(generated.documentHash);
+        if (alreadyUsed) {
+          flowStatus.innerHTML = '<span class="error">El hash ya fue usado. Cambia el folio o vuelve a generar.</span>';
+          return;
+        }
+      } catch (hashCheckError) {
+        console.warn("No se pudo consultar usedHashes:", hashCheckError);
+      }
+
+      flowStatus.innerHTML = "Paso 3/4: Probando llamada estática al contrato...";
+
+      // Prueba previa sin enviar transacción real
+      await contract.mintCertificate.staticCall(
+        studentAddress,
+        generated.metadataUrl,
+        generated.documentHash
+      );
+
+      flowStatus.innerHTML = "Paso 4/4: Enviando transacción a blockchain...";
+
+      const tx = await contract.mintCertificate(
+        studentAddress,
+        generated.metadataUrl,
+        generated.documentHash
+      );
+
+      document.getElementById("txHash").textContent = tx.hash;
+
+      const receipt = await tx.wait();
+
+      let tokenId = null;
+      for (const log of receipt.logs) {
+        try {
+          const parsed = contract.interface.parseLog(log);
+          if (parsed && parsed.name === "CertificateMinted") {
+            tokenId = parsed.args.tokenId.toString();
+            break;
+          }
+        } catch (_) {}
+      }
+
+      document.getElementById("tokenId").textContent = tokenId || "-";
+
+      const finalCard = document.getElementById("finalCard");
+      const finalTitle = document.getElementById("finalTitle");
+      const attributesGrid = document.getElementById("attributesGrid");
+
+      finalTitle.innerHTML = `
+        <span class="ok">NFT emitido correctamente ✅</span><br><br>
+        <strong>${generated.metadata.name}</strong><br>
+        ${generated.metadata.description}
+      `;
+
+      attributesGrid.innerHTML = "";
+      generated.metadata.attributes.forEach((attr) => {
+        const div = document.createElement("div");
+        div.className = "meta-item";
+        div.innerHTML = `<strong>${attr.trait_type}</strong><div>${attr.value}</div>`;
+        attributesGrid.appendChild(div);
+      });
+
+      finalCard.style.display = "block";
+
+      flowStatus.innerHTML = `
+        <span class="ok">Flujo completado correctamente ✅</span><br><br>
+        Certificado generado<br>
+        Metadata creada<br>
+        NFT minteado<br>
+        Token ID: ${tokenId || "-"}
+      `;
+    } catch (error) {
+      flowStatus.innerHTML = `<span class="error">${readableError(error)}</span>`;
+    }
+  });
+</script>
 </body>
 </html>
